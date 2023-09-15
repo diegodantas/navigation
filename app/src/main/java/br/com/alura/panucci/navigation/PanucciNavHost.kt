@@ -1,48 +1,35 @@
 package br.com.alura.panucci.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.navOptions
-import br.com.alura.panucci.ui.components.BottomAppBarItem
 
 @Composable
 fun PanucciNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = highlightsListRoute
+        startDestination = homeGraphRoute
     ) {
-        highlightsListScreen(navController)
-        menuScreen(navController)
-        drinksScreen(navController)
-        productDetailsScreen(navController)
-        checkoutScreen(navController)
-    }
-}
-
-fun NavController.navigateSingleToWithPopTo(
-    item: BottomAppBarItem
-) {
-    val (route, navigate) = when (item) {
-        BottomAppBarItem.Drinks -> Pair(
-            drinksRoute,
-            ::navigateToDrinks
+        homeGraph(
+            onNavigateToCheckout = {
+                navController.navigateToCheckoutRoute()
+            },
+            onNavigateToProductDetails = { product ->
+                navController.navigateToProductDetails(product.id)
+            },
         )
-
-        BottomAppBarItem.HighlightList -> Pair(
-            highlightsListRoute,
-            ::navigateToHighlightsList
+        productDetailsScreen(
+            onNavigateToCheckout = {
+                navController.navigateToCheckoutRoute()
+            },
+            onPopBackStack = {
+                navController.navigateUp()
+            },
         )
-
-        BottomAppBarItem.Menu -> Pair(
-            menuRoute,
-            ::navigateToMenu
+        checkoutScreen(
+            onPopBackStack = {
+                navController.navigateUp()
+            },
         )
     }
-    val navOptions = navOptions {
-        launchSingleTop = true
-        popUpTo(route)
-    }
-    navigate(navOptions)
 }

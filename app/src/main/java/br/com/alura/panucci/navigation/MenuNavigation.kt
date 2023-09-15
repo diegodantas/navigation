@@ -1,21 +1,26 @@
 package br.com.alura.panucci.navigation
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import br.com.alura.panucci.sampledata.sampleProducts
+import br.com.alura.panucci.model.Product
 import br.com.alura.panucci.ui.screens.MenuListScreen
+import br.com.alura.panucci.ui.viewmodels.MenuListViewModel
 
 const val menuRoute = "menu"
 
-fun NavGraphBuilder.menuScreen(navController: NavHostController) {
+fun NavGraphBuilder.menuScreen(onNavigateToProductDetails: (Product) -> Unit) {
     composable(menuRoute) {
-        MenuListScreen(products = sampleProducts,
-            onNavigateToDetails = {
-                navController.navigateToProductDetails(it.id)
-            })
+        val viewModel = viewModel<MenuListViewModel>()
+        val uiState by viewModel.uiState.collectAsState()
+        MenuListScreen(
+            uiState = uiState,
+            onProductClick = onNavigateToProductDetails)
     }
 }
 
