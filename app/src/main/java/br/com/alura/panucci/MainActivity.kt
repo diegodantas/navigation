@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.com.alura.panucci.navigation.PanucciNavHost
@@ -31,9 +32,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen()
+
         setContent {
             val navController = rememberNavController()
             val backStackEntryState by navController.currentBackStackEntryAsState()
+            val orderDoneMessage = backStackEntryState
+                ?.savedStateHandle
+                ?.getStateFlow<String?>("order_done", null)
+                ?.collectAsState()
+            Log.i("MainActivity", "${orderDoneMessage?.value}")
             val currentDestination = backStackEntryState?.destination
             LaunchedEffect(Unit) {
                 navController.addOnDestinationChangedListener { _, _, _, ->
